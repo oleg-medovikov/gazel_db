@@ -6,6 +6,7 @@ from .projects_access                import table_project_access
 from .projects_reference             import table_projects_reference
 from .projects_reference_description import table_projects_reference_description
 from .objects                        import table_objects
-from .objects_binary                 import objects_binary
+from .objects_binary                 import table_objects_binary
+from .objects_images                 import table_objects_images
 
 metadata.create_all(engine)
