@@ -6,7 +6,7 @@
       create user USER with password 'PASSWORD'
       grant all privileges on database NAME to USER
 
-##python dependencies
+## Python dependencies (Использованные библиотеки)
       passlib
       databases
       psycopg2
