@@ -7,6 +7,6 @@ table_objects_images = Table(
     "objects_images",
     metadata,
     Column('o_id', UUID()), # идентификатор файла
-    Column('i_description', String), # подпись под ресунком
+    Column('i_description', String), # подпись под рисунком
     Column('i_image', LargeBinary), # бинарное представление файла
         )
