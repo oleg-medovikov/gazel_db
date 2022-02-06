@@ -2,6 +2,7 @@ from .base import metadata
 
 from sqlalchemy import Table, Column, Integer, String, Boolean
 from sqlalchemy.dialects.postgresql import UUID
+import uuid
 
 
 table_users = Table(

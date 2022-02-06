@@ -1,3 +1,3 @@
 from configuration import *
 from base          import *
-from classes       import *
+from models        import *
