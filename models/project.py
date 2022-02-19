@@ -23,8 +23,9 @@ class Project(BaseModel):
         if not res is None:
             return {"error" : "Проект с таким названием уже существует"}
         else:
+            P_ID = uuid4()
             query = table_projects.insert().values(
-                    p_id = uuid4(),
+                    p_id = P_ID,
                     p_name = json.p_name,
                     p_description = json.p_description,
                     p_datacreate = datetime.now(),
@@ -34,11 +35,17 @@ class Project(BaseModel):
             except Exception as e:
                 return {"error" : str(e)}
             else:
-                {"message" : "Создан новый проект"}
+                {"message" : "Создан новый проект",
+                 "p_id" : P_ID }
 
-
-
-
-
+    async def name(P_ID):
+        "возвращаем имя проекта по id проекта"
+        query = table_projects.select(table_projects.c.p_id == P_ID)
+        res = await database.fetch_one(query)
+        
+        if  res is None:
+            return None
+        else:
+            return res["p_name"]
 
    

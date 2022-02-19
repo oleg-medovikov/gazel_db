@@ -7,7 +7,7 @@ table_project_access = Table(
     "project_access",
     metadata,
     Column('p_id', UUID()), #идентификатор проекта
-    Column('u_id', UUID()), #идентификатор польщователя
+    Column('u_id', UUID()), #идентификатор пользователя
     Column('access_level', Integer), #уровень доступа
         )
 

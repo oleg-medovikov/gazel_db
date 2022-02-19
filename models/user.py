@@ -13,6 +13,12 @@ class Info_user(BaseModel):
     token : str
     username : str
 
+class Update_password(BaseModel):
+    token : str
+    username : str
+    password_hash : str
+
+
 class New_user(BaseModel):
     first_name: str
     second_name: str
@@ -75,7 +81,7 @@ class User(BaseModel):
             if not res["password_hash"] == json.password_hash:
                 return { "error" : "Неправильный пароль"}
             else:
-                print('password correct')
+                #print('password correct')
                 TOKEN = uuid4().hex
                 query = table_users.update()\
                         .where(table_users.c.username==json.username)\
@@ -91,6 +97,23 @@ class User(BaseModel):
                             "position"    : res["position"],
                             "admin" : res["admin"],
                             "token" : TOKEN }
+
+    async def update_password(json: Update_password):
+        "Процедура обновления пароля"
+        query = table_users.select(table_users.c.username == json.username )
+        res = await database.fetch_one(query)
+        if res is None:
+            return {"error" : "Пользователь не найден в системе"}
+        else:
+            query = table_users.update()\
+                     .where(table_users.c.username == json.username)\
+                     .values(password_hash = json.password_hash)
+            try:
+                await database.execute(query)
+            except Exception as e:
+                return {"error" : str(e)}
+            else:
+                return {"message" : "Пароль успешно сменён"}
 
     async def cheak_admin(TOKEN):
         "проверка токена на то, что он принадлежит админу"
@@ -134,6 +157,17 @@ class User(BaseModel):
             otvet.pop('password_hash')
             otvet.pop('token')
             return otvet
+
+    async def user_id(TOKEN):
+        "возвращает идентификатор пользователя через токен"
+        query = table_users.select(table_users.c.token == TOKEN)
+        res = await database.fetch_one(query)
+        if res is None:
+            raise  Exception("Такой пользователь не найден, что очень странно")
+        else:
+            return res['u_id']
+
+
 
 
 
