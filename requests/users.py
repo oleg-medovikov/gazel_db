@@ -1,6 +1,11 @@
 from .app import app
 
-from models import User, Login_json, New_user, Token, Info_user, Update_password
+from typing import Optional
+from fastapi import Header, Body
+from models import User, Login_json, New_user, Update_password
+
+
+
 
 @app.post("/login", tags=["users"])
 async def login_user(json : Login_json):
@@ -23,10 +28,14 @@ async def add_user(json: New_user):
         else:
             return res
 
-@app.post("/users_list", tags=["users"])
-async def users_list(json : Token):
+@app.get("/users_list", tags=["users"])
+async def users_list(
+        Authorization: Optional[str] = Header(None)
+        ): 
     "выдаем список существующих юзернеймов"
-    res = await User.cheak_token(json.token)
+    if Authorization is None:
+        return None
+    res = await User.cheak_token(Authorization)
     if not res == True:
         return res
     else:
@@ -38,23 +47,31 @@ async def users_list(json : Token):
             return res
 
 
-@app.post("/user_info", tags=["users"])
-async def user_info(json : Info_user):
+@app.get("/user_info", tags=["users"])
+async def user_info(
+        Authorization: Optional[str] = Header(None),
+        username: Optional[str] = Body(None)
+        ):
     "Посмотреть информацию о конкретном пользователе"
-    res = await User.cheak_token(json.token)
+    if Authorization is None or username is None:
+        return None
+
+    res = await User.cheak_token(Authorization)
     if not res == True:
         return res
     else:
         try:
-            res = await User.user_info(json.username)
+            res = await User.user_info(username)
         except Exception:
             return {"error" : str(Exception)}
         else:
             return res
 
    
-@app.post("/update_password", tags=["users"])
-async def user_update_password(json : Update_password):
+@app.put("/update_password", tags=["users"])
+async def user_update_password(
+        json : Update_password
+        ):
     "Сменить пароль пользователя, через токен админа"
     res = await User.cheak_admin(json.token)
     if not res == True:

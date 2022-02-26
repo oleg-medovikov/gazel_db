@@ -158,19 +158,28 @@ class User(BaseModel):
             otvet.pop('token')
             return otvet
 
-    async def user_id(TOKEN):
+    async def user_id(TOKEN_NAME):
         "возвращает идентификатор пользователя через токен"
-        query = table_users.select(table_users.c.token == TOKEN)
+        query = table_users.select( table_users.c.token == TOKEN_NAME )
+        res = await database.fetch_one(query)
+
+        if not res is None:
+            return res['u_id']
+        else:
+            query = table_users.select( table_users.c.username == TOKEN_NAME )
+            res = await database.fetch_one(query)
+
+            if not res is None:
+                return res['u_id']
+            else:
+                raise  Exception("Такой пользователь не найден, что очень странно")
+    
+    async def name_user(U_ID):
+        "возвращает username пользователя через u_id"
+        query = table_users.select(table_users.c.u_id == U_ID)
         res = await database.fetch_one(query)
         if res is None:
             raise  Exception("Такой пользователь не найден, что очень странно")
         else:
-            return res['u_id']
-
-
-
-
-
-        
-
+            return res['username']
 
