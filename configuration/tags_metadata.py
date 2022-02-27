@@ -8,4 +8,8 @@ tags_metadata = [
         "name": "projects",
         "description": "Операции над проектами",
     },
+    {
+        "name": "references",
+        "description": "Операции над наименованиями",
+    },
 ]

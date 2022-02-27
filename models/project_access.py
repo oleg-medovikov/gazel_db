@@ -86,3 +86,19 @@ class Project_access(BaseModel):
                 table_project_access.c.p_id == P_ID)
         return await database.fetch_all(query)
         
+    async def access(U_ID,P_ID):
+        "Вернуть уровень доступа"
+        query = table_project_access.select(and_(
+            table_project_access.c.u_id == U_ID,
+            table_project_access.c.p_id == P_ID
+            ))
+        
+        res = await database.fetch_one(query)
+        if not res is None:
+            return res['access_level']
+        else:
+            return None
+
+
+
+

@@ -172,7 +172,7 @@ class User(BaseModel):
             if not res is None:
                 return res['u_id']
             else:
-                raise  Exception("Такой пользователь не найден, что очень странно")
+                return None
     
     async def name_user(U_ID):
         "возвращает username пользователя через u_id"
