@@ -5,31 +5,6 @@ from sqlalchemy import select
 
 from base import database, table_users
 
-class Login_json(BaseModel):
-    username : str
-    password_hash : str
-
-class Info_user(BaseModel):
-    token : str
-    username : str
-
-class Update_password(BaseModel):
-    token : str
-    username : str
-    password_hash : str
-
-
-class New_user(BaseModel):
-    first_name: str
-    second_name: str
-    username: str
-    password_hash: str
-    position: str
-    admin: bool
-    token : str
-
-
-
 class User(BaseModel):
     u_id: UUID = Field(default_factory=uuid4)
     first_name: str
@@ -39,15 +14,21 @@ class User(BaseModel):
     position: str
     admin: bool
 
-    async def add_user(User: New_user):
+    async def add_user(FIRST_NAME,SECOND_NAME,USERNAME,PASSWORD_HASH,POSITION,ADMIN):
         "процедура добавления пользователя"
-        query = table_users.select(table_users.c.username == User.username )
+        query = table_users.select(table_users.c.username == USERNAME )
         res = await database.fetch_one(query)
         if not res is None:
-            return {"error" : "Пользователь с таким username уже существует" }
+            return {"error" : f"Пользователь {username} уже существует" }
         else:
-            User.token = None
-            values = {"u_id":uuid4(),**User.dict()}
+
+            values = {"u_id":uuid4(),
+                      "first_name" : FIRST_NAME,
+                      "second_name": SECOND_NAME,
+                      "username": USERNAME,
+                      "password_hash" : PASSWORD_HASH,
+                      "position" : POSITION,
+                      "admin" : ADMIN}
             query = table_users.insert().values(**values)
             try:
                 await database.execute(query)
@@ -57,7 +38,7 @@ class User(BaseModel):
                 return {"message" : "Пользователь добавлен"}
     
     async def delete(User):
-        "процедура удаления юзера"
+        "процедура удаления юзера Не используется"
         query = table_users.select(table_users.c.username == User.username)
         res = await database.fetch_one(query)
         if res is None:
@@ -71,20 +52,19 @@ class User(BaseModel):
             else:
                 return {"message" : "okey"}
 
-    async def loging(json : Login_json):
+    async def loging(USERNAME, PASSWORD_HASH):
         "Процедура входа в систему"
-        query = table_users.select(table_users.c.username == json.username )
+        query = table_users.select(table_users.c.username == USERNAME )
         res = await database.fetch_one(query)
         if res is None:
             return {"error" : "Пользователь не найден в системе"}
         else:
-            if not res["password_hash"] == json.password_hash:
+            if not res["password_hash"] == PASSWORD_HASH:
                 return { "error" : "Неправильный пароль"}
             else:
-                #print('password correct')
                 TOKEN = uuid4().hex
                 query = table_users.update()\
-                        .where(table_users.c.username==json.username)\
+                        .where(table_users.c.username== USERNAME)\
                         .values(token = TOKEN)
                 try:
                     await database.execute(query)
@@ -98,16 +78,16 @@ class User(BaseModel):
                             "admin" : res["admin"],
                             "token" : TOKEN }
 
-    async def update_password(json: Update_password):
+    async def update_password(USERNAME, PASSWORD_HASH):
         "Процедура обновления пароля"
-        query = table_users.select(table_users.c.username == json.username )
+        query = table_users.select(table_users.c.username == USERNAME )
         res = await database.fetch_one(query)
         if res is None:
             return {"error" : "Пользователь не найден в системе"}
         else:
             query = table_users.update()\
-                     .where(table_users.c.username == json.username)\
-                     .values(password_hash = json.password_hash)
+                     .where(table_users.c.username == USERNAME)\
+                     .values(password_hash = PASSWORD_HASH)
             try:
                 await database.execute(query)
             except Exception as e:

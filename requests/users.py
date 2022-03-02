@@ -2,29 +2,50 @@ from .app import app
 
 from typing import Optional
 from fastapi import Header, Body
-from models import User, Login_json, New_user, Update_password
+from models import User 
 
 
 
 
-@app.post("/login", tags=["users"])
-async def login_user(json : Login_json):
+@app.get("/login", tags=["users"])
+async def login_user(
+        username: Optional[str] = Body(None),
+        password_hash: Optional[str] = Body(None)
+        ):
     "Процесс авторизации клиента"
-    return await User.loging(json)
+    return await User.loging(username,password_hash)
 
 @app.post("/new_user", tags=["users"])
-async def add_user(json: New_user):
+async def add_user(
+        Authorization: Optional[str] = Header(None),
+        first_name: Optional[str] = Body(None),
+        second_name: Optional[str] = Body(None),
+        username: Optional[str] = Body(None),
+        password_hash: Optional[str] = Body(None),
+        position: Optional[str] = Body(None),
+        admin: Optional[bool] = Body(None),
+        ):
     """Процесс создания нового юзера.
     в айди записывается токен создателя,
     который нужно проверить на наличие админских прав"""
-    res = await User.cheak_admin(json.token)
+    if Authorization is None:
+        return None
+
+    res = await User.cheak_admin(Authorization)
     if not res == True:
         return res
     else:
         try:
-            res = await User.add_user(json)
-        except Exception:
-            return {"error" : str(Exception)}
+            res = await User.add_user(
+                    first_name,
+                    second_name,
+                    username,
+                    password_hash,
+                    position,
+                    admin
+                    )
+        except Exception as e:
+            return {"error" : str(e)}
         else:
             return res
 
@@ -70,15 +91,17 @@ async def user_info(
    
 @app.put("/update_password", tags=["users"])
 async def user_update_password(
-        json : Update_password
+        Authorization: Optional[str] = Header(None),
+        username: Optional[str] = Body(None),
+        password_hash: Optional[str] = Body(None)
         ):
     "Сменить пароль пользователя, через токен админа"
-    res = await User.cheak_admin(json.token)
+    res = await User.cheak_admin(Authorization)
     if not res == True:
         return res
     else:
         try:
-            res = await User.update_password(json)
+            res = await User.update_password(username,password_hash)
         except Exception:
             return {"error" : str(Exception)}
         else:
