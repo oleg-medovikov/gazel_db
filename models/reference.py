@@ -1,7 +1,7 @@
 from datetime import datetime
 from uuid import uuid4, UUID
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 from base import database, table_projects_reference
 
@@ -67,7 +67,8 @@ class Reference(BaseModel):
         if not res is None: 
             list_ = []
             for row in res:
-                list_.appaend(row['r_code_name_level_1'])
+                if not row['r_code_name_level_1'] in list_:
+                    list_.append(row['r_code_name_level_1'])
             list_.sort()
             
             return list_
@@ -87,7 +88,8 @@ class Reference(BaseModel):
         if not res is None: 
             list_ = []
             for row in res:
-                list_.appaend(row['r_code_name_level_2'])
+                if not row['r_code_name_level_2'] in list_:
+                    list_.append(row['r_code_name_level_2'])
             list_.sort()
             
             return list_
@@ -110,7 +112,8 @@ class Reference(BaseModel):
         if not res is None: 
             list_ = []
             for row in res:
-                list_.appaend(row['r_code_name_level_3'])
+                if not row['r_code_name_level_3'] in list_:
+                    list_.append(row['r_code_name_level_3'])
             list_.sort()
             
             return list_

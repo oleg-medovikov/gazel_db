@@ -13,7 +13,10 @@ async def login_user(
         password_hash: Optional[str] = Body(None)
         ):
     "Процесс авторизации клиента"
-    return await User.loging(username,password_hash)
+    if username is None or password_hash is None:
+        return None
+    else:
+        return await User.loging(username,password_hash)
 
 @app.post("/new_user", tags=["users"])
 async def add_user(
