@@ -119,3 +119,28 @@ class Reference(BaseModel):
             return list_
         else:
             return []
+
+    async def name(P_ID,
+            R_CODE_NAME_LEVEL_1,
+            R_CODE_NAME_LEVEL_2,
+            R_CODE_NAME_LEVEL_3):
+        "Получаем конкретное обозначение проекта"
+        
+        query = table_projects_reference.select().where(and_(
+                table_projects_reference.c.p_id == P_ID,
+                table_projects_reference.c.r_code_name_level_1 == R_CODE_NAME_LEVEL_1,
+                table_projects_reference.c.r_code_name_level_2 == R_CODE_NAME_LEVEL_2,
+                table_projects_reference.c.r_code_name_level_3 == R_CODE_NAME_LEVEL_3
+                ))
+    
+        res = await database.fetch_one(query)
+
+        if not res is None:
+            return res
+
+    async def cheak(R_ID):
+        "Проверка наличия определения по id"
+        query = table_projects_reference.select(
+                table_projects_reference.c.r_id == R_ID
+                )
+        return await database.fetch_one(query)

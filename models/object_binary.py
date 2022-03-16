@@ -19,7 +19,7 @@ class Object_binary(BaseModel):
         else:
             query = table_objects_binary.insert().values(
                     o_id = O_ID,
-                    o_binary = O_BINARY
+                    o_binary =  O_BINARY
                     )
 
             try:

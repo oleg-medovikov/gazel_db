@@ -13,6 +13,7 @@
       fastapi
       sqlalchemy
       pydantic
+      python-multipart
 
 
 ## След раздел 

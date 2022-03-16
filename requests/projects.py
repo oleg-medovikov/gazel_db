@@ -160,5 +160,3 @@ async def remove_user_from_team(
                                 removed_user
                         )
                 return res2
-
-

@@ -20,7 +20,7 @@ class Object(BaseModel):
         "Процедура добавления объекта"
         query = table_objects.select().where(and_(
             table_objects.c.r_id == R_ID,
-            table_objects.c.o_hash_sum
+            table_objects.c.o_hash_sum == O_HASH_SUM
             ))
 
         res = await database.fetch_one(query)
@@ -45,3 +45,11 @@ class Object(BaseModel):
             else:
                 return {"O_ID" : O_ID}
 
+    async def files(R_ID):
+        "Возвращает список файлов для данного обозначения"
+        
+        query = table_objects.select().where(
+                table_objects.c.r_id == R_ID
+                )
+
+        res = await database.fetch_all(query)
