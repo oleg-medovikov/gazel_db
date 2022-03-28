@@ -1,6 +1,7 @@
 from starlette.config import Config
 from passlib.hash import md5_crypt
-
+from pathlib import Path
+import os
 
 config = Config(".env")
 
@@ -23,4 +24,9 @@ admin = {
         "admin" : True,
         "token" : ''
         }
+#=====================
 
+DATA_FILES = Path(Path.home(), 'Gazel_fl')
+
+if not DATA_FILES.is_dir():
+    os.makedirs(DATA_FILES)
