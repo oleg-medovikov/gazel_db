@@ -6,4 +6,5 @@ from .database    import *
 from .main        import *
 from .reference   import *
 from .objects     import *
+from .logs        import *
 

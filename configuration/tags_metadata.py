@@ -16,4 +16,8 @@ tags_metadata = [
         "name" : "objects",
         "description" : "Операции над файлами",
     },
+    {
+        "name" : "logs",
+        "description" : "Запись лога в базу"
+    },
 ]
