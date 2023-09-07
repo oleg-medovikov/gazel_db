@@ -1,6 +1,6 @@
 ## Create postgress database 
       sudo apt install postgresql postgresql-contrib
-      sudo su postres 
+      sudo su postres или sudo -i -u postgres
       psql
       create database NAME;
       \c NAME;
